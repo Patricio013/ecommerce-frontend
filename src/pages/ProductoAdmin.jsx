@@ -1,174 +1,98 @@
-import { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthProvider'; 
+import { fetchProductoAdmin,  deleteProductoAdmin, fetchCategorias } from '../Redux/productosAdminSlice';
+import '../components/Styles/ProductoUser.css';
+import '../components/Styles/Modificar.css';
+import '../components/Styles/Catalogo.css';
 
 function ProductoAdmin() {
   const { id } = useParams();
-  const [producto, setProducto] = useState(null);
-  const [categorias, setCategorias] = useState([]);
   const navigate = useNavigate();
-  const { auth } = useAuth(); 
-  const token = auth.token; 
+  const dispatch = useDispatch();
 
+  const { producto, loading, error } = useSelector((state) => state.productosAdmin);
+
+  const [localProducto, setLocalProducto] = useState(null);
 
   useEffect(() => {
-    const fetchProducto = async () => {
-      const response = await fetch(`http://localhost:4002/productosAdmin/PorProducto?id=${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setProducto({
-        ...data,
-        categoriasIds: new Set(data.categorias.map(cat => cat.id)), 
-      });
-    };
-
-    const fetchCategorias = async () => {
-      const response = await fetch(`http://localhost:4002/categorias/ObtenerCategorias`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      setCategorias(data);
-    };
-
-    fetchProducto();
-    fetchCategorias();
-  }, [id, token]);
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setProducto((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleCheckboxChange = (e) => {
-    setProducto((prev) => ({ ...prev, estadoDescuento: e.target.checked }));
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!producto.titulo || !producto.precio || !producto.descripcion || !producto.stock) {
-      alert("Todos los campos deben estar completos.");
-      return;
-    }
-
-    try {
-      await fetch(`http://localhost:4002/productosAdmin/actualizar?id=${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          ...producto,
-          categoriasIds: Array.from(producto.categoriasIds),
-        }),
-      });
-      alert('Producto actualizado exitosamente');
-    } catch (error) {
-      console.error('Error al actualizar producto:', error);
-    }
-  };
-
-  const handleEliminar = async () => {
-    try {
-      await fetch(`http://localhost:4002/productosAdmin/borrar?id=${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-      alert('Producto eliminado');
-      navigate('/productoAdmin');
-    } catch (error) {
-      console.error('Error al eliminar producto:', error);
-    }
-  };
-
-  const handleCategoriaChange = async (categoriaId) => {
-    const categoriasIds = new Set(producto.categoriasIds);
-    
-    try {
-      if (categoriasIds.has(categoriaId)) {
-        await fetch(`http://localhost:4002/productosAdmin/BorrarCat?productId=${id}&categoriaId=${categoriaId}`, {
-          method: 'DELETE',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        categoriasIds.delete(categoriaId);
-      } else {
-        await fetch(`http://localhost:4002/productosAdmin/AgregarCat?productId=${id}&categoriaId=${categoriaId}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-          },
-        });
-        categoriasIds.add(categoriaId);
+    dispatch(fetchProductoAdmin(id)).then((result) => {
+      if (fetchProductoAdmin.fulfilled.match(result)) {
+        setLocalProducto(result.payload);
       }
-      setProducto((prev) => ({ ...prev, categoriasIds }));
-    } catch (error) {
-      console.error('Error al modificar categorías:', error);
+    });
+    dispatch(fetchCategorias());
+  }, [id, dispatch]);
+
+  const handleEliminar = () => {
+    const confirmar = window.confirm("¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.");
+    if (confirmar) {
+      dispatch(deleteProductoAdmin(id))
+        .then(() => navigate('/admin'))
+        .catch((err) => console.error('Error al eliminar producto:', err));
     }
   };
 
+  const handleVerProducto = (id) => {
+    navigate(`/modificarProducto/${id}`);
+  };
 
-  if (!producto) {
-    return <p>Cargando...</p>;
-  }
+  const handleCambiarFoto = (id) => {
+    navigate(`/cambiarFoto/${id}`);
+  };
+
+  if (loading) 
+    return (
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+  );
+  if (error) return <p>Error: {error}</p>;
+  if (!localProducto) return <p>Producto no encontrado o eliminado.</p>;
 
   return (
-    <div>
-      <h1>Editar Producto: {producto.titulo}</h1>
-      <form onSubmit={handleSubmit}>
-        <label>
-          Título:
-          <input type="text" name="titulo" value={producto.titulo} onChange={handleInputChange} required />
-        </label>
-        <label>
-          Precio:
-          <input type="number" name="precio" value={producto.precio} onChange={handleInputChange} required />
-        </label>
-        <label>
-          Descripción:
-          <textarea name="descripcion" value={producto.descripcion} onChange={handleInputChange} required />
-        </label>
-        <label>
-          Stock:
-          <input type="number" name="stock" value={producto.stock} onChange={handleInputChange} required />
-        </label>
-        <label>
-          Descuento (%):
-          <input type="number" name="descuento" value={producto.descuento} onChange={handleInputChange} min="0" max="99.99" />
-        </label>
-        <label>
-          ¿Descuento Activo?
-          <input type="checkbox" checked={producto.estadoDescuento} onChange={handleCheckboxChange} />
-        </label>
-        <fieldset>
-          <legend>Categorías:</legend>
-          {categorias.map(categoria => (
-            <label key={categoria.id}>
-              <input
-                type="checkbox"
-                checked={producto.categoriasIds?.has(categoria.id)} 
-                onChange={() => handleCategoriaChange(categoria.id)} 
-              />
-              {categoria.nombre}
-            </label>
-          ))}
-        </fieldset>
-        <button type="submit">Guardar Cambios</button>
-      </form>
-      <button onClick={handleEliminar}>Eliminar Producto</button>
+    <div className='containerP'>
+      {producto && (
+        <>
+          <div className='cuerpo'>
+            <h1>{producto.titulo}</h1>
+            <p>{producto.descripcion}</p>
+            <div className="container-precio">
+              {producto.estadoDescuento ? (
+                <div className="precios-descuento">
+                  <span className="precio-tachado">${producto.precioTotal.toFixed(2)}</span>
+                  <span className="precio-descuento">
+                    ${producto.precioDescuento.toFixed(2)}
+                  </span>
+                  <span className="descuento">({producto.descuento}% OFF)</span>
+                </div>
+              ) : (
+                <div className="precio-normal">
+                  <span>${producto.precioTotal.toFixed(2)}</span>
+                </div>
+              )}
+            </div>
+            <p>Stock: {producto.stock}</p>
+            <h2>Categorias</h2>
+              {producto.categorias?.map((categoria) => (
+                  <p className='cyberpunkF-checkbox-label' key={categoria.id}>
+                    {categoria.nombre}
+                  </p>
+                ))}
+            <div className='botonesM-container'>
+              <button type="button" onClick={handleEliminar} className='submitM'>
+                Eliminar Producto
+              </button>
+              <button onClick={() => handleVerProducto(producto.id)} className='submitM'>Modificar Producto</button>
+              <button onClick={() => handleCambiarFoto(producto.id)} className='submitM'> Cambiar Imagen</button>
+            </div>
+          </div>
+          <div className='cardP'>
+            <img src={producto.imagenUrl} alt={producto.titulo}/>
+          </div>
+        </>
+      )}
     </div>
   );
 }

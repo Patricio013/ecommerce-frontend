@@ -1,5 +1,4 @@
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Catalogo from './pages/Catalogo';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -12,39 +11,34 @@ import PedidosUser from './pages/PedidosUser';
 import CrearProducto from './pages/CrearProducto';
 import ProductoAdmin from './pages/ProductoAdmin';
 import PedidosAdmin from './pages/PedidosAdmin';
-import { AuthProvider, useAuth } from './components/AuthProvider';
+import { Provider } from 'react-redux';
+import store from './Redux/store';
+import ModificarProducto from './pages/ModificarProducto';
+import CambiarFoto from './pages/CambiarFoto';
 
 
 function App() {
   return (
-    <AuthProvider>
+    <Provider store = {store}>
       <Router>
-        <AppContent />
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<Catalogo />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/carrito" element={<Carrito />} />
+          <Route path="/admin" element={<AdminProductos />} />
+          <Route path="/filtrado" element={<Filtrado />} />
+          <Route path="/producto/:id" element={<Producto />} />
+          <Route path="/pedidosUser" element={<PedidosUser />} />
+          <Route path="/crearProducto" element={<CrearProducto />} />
+          <Route path="/productoAdmin/:id" element={<ProductoAdmin />} />
+          <Route path="/pedidosAdmin" element={<PedidosAdmin />} />
+          <Route path="/modificarProducto/:id" element={<ModificarProducto />} />
+          <Route path="/cambiarFoto/:id" element={<CambiarFoto />} />
+        </Routes>
       </Router>
-    </AuthProvider>
-  );
-}
-
-function AppContent() {
-  const { auth, logout } = useAuth(); // Ahora está dentro de un componente envuelto por AuthProvider
-
-  return (
-    <>
-      <Navbar isAuthenticated={!!auth.token} onLogout={logout} />
-      <Routes>
-        <Route path="/" element={<Catalogo />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/carrito" element={<Carrito />} />
-        <Route path="/admin" element={<AdminProductos />} />
-        <Route path="/filtrado" element={<Filtrado />} />
-        <Route path="/producto/:id" element={<Producto />} />
-        <Route path="/pedidosUser" element={<PedidosUser />} />
-        <Route path="/crearProducto" element={<CrearProducto />} />
-        <Route path="/productoAdmin/:id" element={<ProductoAdmin />} />
-        <Route path="/pedidosAdmin" element={<PedidosAdmin />} />
-      </Routes>
-    </>
+    </Provider>
   );
 }
 

@@ -1,61 +1,61 @@
-import { useEffect, useState } from 'react';
-import { useAuth } from '../components/AuthProvider';
+import { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchPedidosUser } from '../Redux/pedidosUserSlice';
+import '../components/Styles/Pedidos.css';
+import '../components/Styles/Catalogo.css';
 
-function Pedido(){
-    const [pedidos, setPedidos] = useState([]);
-    const { auth } = useAuth(); 
-    const token = auth.token;
+function Pedido() {
+  const dispatch = useDispatch();
+  const { pedidos, loading, error } = useSelector((state) => state.pedidosUser);
 
-    const obtenerPedidos = () => {
-        fetch('http://localhost:4002/pedidos/ObtenerTodosUser', {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            }
-        })
-        .then(res => {
-            if (!res.ok) {
-                throw new Error('Error en la respuesta del servidor');
-            }
-            return res.json(); // Asegúrate de llamar a `json()` aquí
-        })
-        .then(data => setPedidos(data))
-        .catch(error => console.error('Error al obtener pedidos:', error));
-    };
+  useEffect(() => {
+    dispatch(fetchPedidosUser());
+  }, [dispatch]);
 
-    useEffect(() => {
-        obtenerPedidos();
-    }, []);
-
+  if (loading) 
     return (
-        <div>
-            <h1>Tus pedidos</h1>
-            {pedidos.length === 0 ? (
-                <p>No tienes pedidos.</p>
-            ) : (
+      <div class="loading-container">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+      </div>
+  );
+  if (error) return <p>Error: {error}</p>;
+
+  return (
+    <div className='containerPe'>
+      <h1 className='titulo-principalPe'>Tus pedidos</h1>
+      {pedidos.length === 0 ? (
+        <p>No tienes pedidos.</p>
+      ) : (
+        <div className="contenedor-pedidos">
+          {pedidos.map((pedido) => (
+            <div key={pedido.id} className="pedido-card">
+              <div className="pedidos-title">
+                <h2>Pedido #{pedido.id}</h2>
+              </div>
+              <div className="pedidos-body">
+                <p><strong>Comprador:</strong> {pedido.comprador?.primerNombre} {pedido.comprador?.apellido}</p>
+                <p><strong>Precio Total:</strong> ${pedido.precioTotal?.toFixed(2)}</p>
+                <p><strong>Método de Pago:</strong> {pedido.metodoDePago}</p>
+                <p><strong>Dirección:</strong> {pedido.direccion}</p>
+              </div>
+              <hr />
+              <div className="pedidos-footer">
+                <h3 className="pedidos-title">Productos:</h3>
                 <ul>
-                    {pedidos.map(pedido => (
-                        <li key={pedido.id}>
-                            <h2>Pedido ID: {pedido.id}</h2>
-                            <p>Comprador: {pedido.comprador?.primerNombre} {pedido.comprador?.apellido}</p>
-                            <p>Precio Total: ${pedido.precioTotal?.toFixed(2)}</p>
-                            <p>Método de Pago: {pedido.metodoDePago}</p>
-                            <p>Dirección: {pedido.direccion}</p>
-                            <h3>Productos:</h3>
-                            <ul>
-                                {pedido.productos.map(producto => (
-                                    <li key={producto.id}>
-                                        <p>{producto.titulo},  Cantidad: {producto.cant}</p>
-                                    </li>
-                                ))}
-                            </ul>
-                        </li>
-                    ))}
+                  {pedido.productos.map((producto) => (
+                    <li key={producto.id} className="pedidos-body">
+                      <p className="pedidos-body">{producto.titulo}, Cantidad: {producto.cant}</p>
+                    </li>
+                  ))}
                 </ul>
-            )}
+              </div>
+            </div>
+          ))}
         </div>
-    );
+      )}
+    </div>
+  );
 }
 
 export default Pedido;

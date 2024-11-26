@@ -1,0 +1,151 @@
+.containerP {
+    margin-top: 100px;
+    background-image: radial-gradient(circle, rgb(245, 241, 235), transparent 20%, rgb(206, 194, 189));
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-color: rgb(255, 255, 255);
+    background-attachment: fixed;
+    display: flex; 
+    flex-direction: row; 
+    align-items: flex-start; 
+    justify-content: space-between; 
+    min-height: calc(100vh - 100px);
+    width: 100vw;
+    margin: 0;
+    padding: 20px; 
+    box-sizing: border-box;
+}
+
+.cardP {
+    width: 40%; 
+    height: auto;
+    background: rgb(236, 236, 236);
+    box-shadow: rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset;
+    text-align: right;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+}
+
+.cardP img {
+    max-width: 100%; 
+    max-height: 100%;
+    object-fit: cover;
+    border-radius: inherit;
+}
+
+.cuerpo {
+    flex: 1; 
+    text-align: left;
+    padding-right: 20px; 
+}
+
+.container-precio {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    font-family: Arial, sans-serif;
+  }
+  
+  .precio-tachado {
+    text-decoration: line-through; 
+    color: gray; 
+    font-size: 1rem;
+  }
+  
+  .precio-descuento {
+    color: #ff0000; 
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+  
+  .descuento {
+    color: green; 
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  .precio-normal {
+    font-size: 1.2rem;
+    color: black;
+    font-weight: bold;
+  }
+
+  .containerP h1{
+    color: #795548;
+  }
+
+  .containerP p {
+    color: #a87054;
+  }
+
+  .containerP2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 500px;
+    user-select: none;
+  }
+  
+  .textP {
+    font-size: 0.8rem;
+    text-align: left;
+    width: 100%;
+    color: black;
+    font-weight: bold;
+    margin-bottom: 3px;
+  }
+  
+  .inputP {
+    border-radius: 8px;
+    padding: 7px 16px;
+    background-color: #795548;
+    box-shadow: rgba(77, 79, 82, 0.2) 0px 8px 24px;
+    border: 2px solid rgb(184, 180, 180);
+    font-size: 0.8rem;
+    outline: none;
+    transition: 0.5s ease;
+  }
+  
+  .inputP:hover {
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    border-color: rgb(138, 175, 255);
+  }
+  
+  .inputP:focus {
+    border: 2px solid rgb(57, 120, 255);
+    box-shadow: rgba(133, 130, 130, 0.1) 0px 4px 12px;
+    transform: scale(0.99);
+  }
+  
+  .inputP::placeholder {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  
+  .buttonP {
+    padding: 6px 15px;
+    text-align: center;
+    color: rgb(95, 87, 87);
+    cursor: pointer;
+    background-color: white;
+    border-radius: 6px;
+    border: none;
+    transition: 0.5s;
+    width: 100%;
+    margin-top: 7px;
+    font-size: 13px;
+    box-shadow: rgba(104, 100, 100, 0.1) 0px 4px 6px -1px, rgba(49, 42, 42, 0.06) 0px 2px 4px -1px;
+  }
+  
+  .buttonP:hover {
+    border-radius: 7px;
+    background-color: rgb(243, 242, 242);
+    border-color: rgb(236, 232, 232);
+  }
+
+  .cuerpo h2{
+    color: #795548;
+  }
+  
+  

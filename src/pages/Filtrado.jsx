@@ -1,75 +1,75 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchCategorias, filtrarProductos } from '../Redux/filtradoSlice';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../components/AuthProvider';
+import '../components/Styles/Filtrado.css'
 
 function Filtrado() {
-  const [categorias, setCategorias] = useState([]);
-  const [filtros, setFiltros] = useState([]);
-  const [productosFiltrados, setProductosFiltrados] = useState([]);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { auth } = useAuth(); 
-  const token = auth.token;
+
+  const { categorias, productosFiltrados } = useSelector((state) => state.categorias);
+  const [filtros, setFiltros] = useState([]);
+
+  const token = useSelector((state) => state.auth.token);
 
   useEffect(() => {
-    fetch('http://localhost:4002/categorias/ObtenerCategorias') 
-      .then(res => res.json())
-      .then(data => setCategorias(data));
-  }, []);
+    dispatch(fetchCategorias());
+  }, [dispatch]);
 
   const handleCategoriaChange = (categoriaId) => {
-    setFiltros(prev =>
-      prev.includes(categoriaId) ? prev.filter(id => id !== categoriaId) : [...prev, categoriaId]
+    setFiltros((prev) =>
+      prev.includes(categoriaId) ? prev.filter((id) => id !== categoriaId) : [...prev, categoriaId]
     );
   };
 
   const handleFiltrar = () => {
-    const nombresParam = filtros.join(','); 
+    dispatch(filtrarProductos({ filtros, token }));
+  };
 
-    fetch(`http://localhost:4002/categorias/filtro?nombres=${nombresParam}`, {
-        method: "GET",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error("Error en la respuesta del servidor");
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log(data);
-        setProductosFiltrados(data); 
-    })
-    .catch(error => {
-        console.error("Error:", error);
-    });
-};
+  const handleVerProducto = (productoId) => {
+    navigate(`/producto/${productoId}`);
+  };
 
   return (
-    <div>
-      <h1>Filtrado de productos</h1>
-      <div>
-        {categorias.map(cat => (
-          <div key={cat.id}>
-            <input
-              type="checkbox"
-              onChange={() => handleCategoriaChange(cat.id)}
-              checked={filtros.includes(cat.id)}
-            />
-            <label>{cat.nombre}</label>
-          </div>
-        ))}
+    <div className='contenido'>
+      <h1 className='titulo-principal'>Filtrado de productos</h1>
+      <div className='checkboxF-container'>
+          {categorias.map((cat) => (
+            <div key={cat.id}>
+              <label className='cyberpunkF-checkbox-label'>
+                <input
+                  type="checkbox"
+                  onChange={() => handleCategoriaChange(cat.id)}
+                  checked={filtros.includes(cat.id)}
+                  className='cyberpunkF-checkbox'
+                />
+              {cat.nombre}
+              </label>
+            </div>
+          ))}
       </div>
-      <button onClick={handleFiltrar}>Aplicar filtro</button>
-      <div>
-        {productosFiltrados.map(prod => (
-          <div key={prod.id}>
-            <h4>{prod.titulo}</h4>
-            <p>{prod.descripcion}</p>
-            <p>{prod.precio}</p>
-            <button onClick={() => navigate(`/producto/${prod.id}`)}>Ver Producto</button>
+      <button onClick={handleFiltrar} className="submitF">Aplicar filtro</button>
+      <div className='contenedor-productos'>
+        {productosFiltrados.filter((prod) => prod.stock >= 1).map((prod) => (
+          <div className='card' key={prod.id}>
+            <div className='card-img'> 
+              <img src={prod.imagenUrl} alt={prod.titulo}/>
+            </div>
+            <div>
+              <p className="text-title">{prod.titulo}</p>
+              <p className="text-body">{prod.descripcion}</p>
+            </div>
+            <div className="card-footer">
+              <span className="text-title">${prod.precioDescuento.toFixed(2)}</span>
+                <div className="card-button" onClick={() => handleVerProducto(prod.id)}>
+                  <svg className="svg-icon" viewBox="0 0 20 20">
+                    <path d="M17.72,5.011H8.026c-0.271,0-0.49,0.219-0.49,0.489c0,0.271,0.219,0.489,0.49,0.489h8.962l-1.979,4.773H6.763L4.935,5.343C4.926,5.316,4.897,5.309,4.884,5.286c-0.011-0.024,0-0.051-0.017-0.074C4.833,5.166,4.025,4.081,2.33,3.908C2.068,3.883,1.822,4.075,1.795,4.344C1.767,4.612,1.962,4.853,2.231,4.88c1.143,0.118,1.703,0.738,1.808,0.866l1.91,5.661c0.066,0.199,0.252,0.333,0.463,0.333h8.924c0.116,0,0.22-0.053,0.308-0.128c0.027-0.023,0.042-0.048,0.063-0.076c0.026-0.034,0.063-0.058,0.08-0.099l2.384-5.75c0.062-0.151,0.046-0.323-0.045-0.458C18.036,5.092,17.883,5.011,17.72,5.011z" />
+                    <path d="M8.251,12.386c-1.023,0-1.856,0.834-1.856,1.856s0.833,1.853,1.856,1.853c1.021,0,1.853-0.83,1.853-1.853S9.273,12.386,8.251,12.386z M8.251,15.116c-0.484,0-0.877-0.393-0.877-0.874c0-0.484,0.394-0.878,0.877-0.878c0.482,0,0.875,0.394,0.875,0.878C9.126,14.724,8.733,15.116,8.251,15.116z" />
+                    <path d="M13.972,12.386c-1.022,0-1.855,0.834-1.855,1.856s0.833,1.853,1.855,1.853s1.854-0.83,1.854-1.853S14.994,12.386,13.972,12.386z M13.972,15.116c-0.484,0-0.878-0.393-0.878-0.874c0-0.484,0.394-0.878,0.878-0.878c0.482,0,0.875,0.394,0.875,0.878C14.847,14.724,14.454,15.116,13.972,15.116z" />
+                  </svg>
+                </div>
+            </div>
           </div>
         ))}
       </div>

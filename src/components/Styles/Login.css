@@ -1,0 +1,84 @@
+.login-page {
+    background-image: url('https://mueblesmary.com/wp-content/uploads/2023/08/2-1.jpeg');
+    background-size: cover;
+    background-position: center; 
+    background-attachment: fixed; 
+    background-repeat: no-repeat; 
+    height: 100vh; 
+    width: 100vw; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center; 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+body {
+    margin: 0; 
+    padding: 0;
+}
+
+.login-container {
+    background-color: rgba(248, 249, 250, 0.9); 
+    padding: 20px; 
+    border-radius: 8px; 
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); 
+    width: 400px; 
+    max-width: 90vw; 
+    text-align: center; 
+}
+
+.login-form {
+    background-color: #ffffff; 
+    padding: 35px; 
+    border-radius: 8px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.2); 
+    transition: transform 0.3s;
+}
+
+.login-form:hover {
+    transform: scale(1.02);
+}
+
+.login-form h2 {
+    margin-bottom: 30px; 
+    color: #795548;
+    text-align: center;
+}
+
+.login-form input {
+    width: 100%; 
+    padding: 15px;
+    margin: 10px 0; 
+    border: 1px solid #bdbdbd; 
+    border-radius: 4px;
+    transition: border-color 0.3s; 
+}
+
+.login-form input:focus {
+    border-color: #946d63;
+    outline: none;
+}
+
+.button-container {
+    display: flex; 
+    justify-content: space-between; 
+    gap: 10px; 
+}
+
+.login-form button {
+    background-color: #795548; 
+    color: white; 
+    padding: 15px; 
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer; 
+    transition: background-color 0.3s; 
+    width: 100%; 
+}
+
+.login-form button:hover {
+    background-color: #59433c;
+}

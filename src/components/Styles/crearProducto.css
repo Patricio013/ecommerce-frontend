@@ -1,0 +1,102 @@
+.custum-file-upload {
+    height: 200px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #cacaca;
+    border-radius: 10px;
+    padding: 20px;
+    cursor: pointer;
+    position: relative;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 1);
+    box-shadow: 0px 48px 35px -48px rgba(0,0,0,0.1);
+  }
+  
+  .custum-file-upload .iconCP {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custum-file-upload .iconCP svg {
+    height: 80px;
+    fill: rgba(75, 85, 99, 1);
+  }
+  
+  .custum-file-upload .textCP {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .custum-file-upload .textCP span {
+    font-weight: 400;
+    color: rgba(75, 85, 99, 1);
+  }
+  
+  .custum-file-upload input {
+    display: none;
+  }
+
+  .preview-container {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .preview-image {
+    max-height: 180px;
+    max-width: 300px;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .custum-file-upload .preview-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+  
+  .custum-file-upload .change-text {
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #555;
+  }
+
+  .crear-producto-container {
+    max-width: 600px;
+    margin: 10px auto;
+    background-color: #e0ac69; 
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .form-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .crear-producto-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .estado-descuento {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .success-message {
+    color: #28a745;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+  }

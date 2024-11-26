@@ -1,37 +1,23 @@
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../Redux/authSlice';
 import { useNavigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '../components/AuthProvider';
+import '../components/Styles/Login.css';
+
 
 function Login() {
   const [formData, setFormData] = useState({ email: '', password: '' });
-  const { login } = useAuth(); // Traemos la función login desde el AuthContext
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { loading, error } = useSelector((state) => state.auth);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    fetch('http://localhost:4002/usuarios/authenticate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.access_token && data.roles) {
-          const token = data.access_token;
-          const role = data.roles;
-
-          // Llamamos al método login del AuthProvider pasando el token y el rol
-          login(token, role);
-          navigate('/');
-        } else {
-          alert('Error: No se recibieron las credenciales correctas');
-        }
-      })
-      .catch((error) => {
-        console.error('Error:', error);
-        alert('Ocurrió un error durante la solicitud');
-      });
+    dispatch(login(formData)).then((action) => {
+      if (action.meta.requestStatus === 'fulfilled') {
+        navigate('/');
+      }
+    });
   };
 
   const handleChange = (e) => {
@@ -40,32 +26,43 @@ function Login() {
   };
 
   return (
-    <div>
-      <h2>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={handleChange}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="Contraseña"
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
-        <button type="submit">Iniciar Sesión</button>
-      </form>
-      <button onClick={() => navigate('/register')}>Registrarme</button>
+    <div className='login-page'>
+      <div className='login-container d-flex justify-content-center align-items-center vh-100'>
+        <div className='login-form p-4 shadow-lg rounded bg-white'>
+          <h2 className="text-center mb-4">Iniciar Sesión</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-3">
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="mb-3">
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Contraseña"
+                  value={formData.password}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+              <div className="d-flex justify-content-between gap-3 mt-4">
+                <button type="submit" disabled={loading} className="btn btn-primary w-100">
+                  {loading ? 'Cargando...' : 'Iniciar Sesión'}
+                </button>
+              </div>
+            </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <button className="btn btn-secondary w-100" onClick={() => navigate('/register')}>Registrarme</button>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default Login;
-
-
